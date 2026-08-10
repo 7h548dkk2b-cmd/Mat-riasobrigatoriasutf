@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Grade Eng. Elétrica — Tracker</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root{ --bg:#EDF0F6; --surface:#FFFFFF; --ink:#132540; --ink-soft:#5D6B85;
+  --line:#E3E8F1; --track:#DCE3EE; --accent:#F59E0B; --accent-deep:#D97B06;
+  --glow:rgba(245,158,11,.5); --navy:#132540; --navy-2:#1C3357; }
+*{ box-sizing:border-box; }
+body{ margin:0; font-family:'Inter',system-ui,-apple-system,sans-serif; color:var(--ink);
+  background:radial-gradient(140% 60% at 50% 0%,#F1F4FA,var(--bg)); min-height:100vh; padding:20px 14px 56px; }
+.wrap{ max-width:760px; margin:0 auto; }
+
+/* Hero */
+.hero{ background:linear-gradient(160deg,var(--navy) 0%,var(--navy-2) 100%);
+  border-radius:24px; padding:26px 24px 28px; color:#fff; position:relative; overflow:hidden;
+  box-shadow:0 22px 48px -24px rgba(19,37,64,.75); }
+.hero::after{ content:""; position:absolute; inset:0;
+  background:radial-gradient(120% 90% at 100% 0%,rgba(245,158,11,.18),transparent 55%); pointer-events:none; }
+.eyebrow{ display:flex; align-items:center; gap:7px; font-size:12px; letter-spacing:.16em;
+  text-transform:uppercase; color:#9FB0CC; font-weight:600; }
+h1{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:27px; line-height:1.08;
+  margin:8px 0 2px; letter-spacing:-.01em; }
+.sub{ font-size:13px; color:#AEBDD6; margin:0 0 18px; }
+
+/* Nome */
+.nameRow{ display:flex; align-items:center; gap:8px; margin-bottom:22px; flex-wrap:wrap; }
+.nameRow label{ font-size:12px; color:#9FB0CC; font-weight:500; }
+.nameInput{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18);
+  color:#fff; border-radius:9px; padding:7px 11px; font-size:14px; font-family:inherit;
+  min-width:150px; flex:1; max-width:240px; }
+.nameInput::placeholder{ color:#7E8FAE; }
+.nameInput:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+
+/* Medidor total */
+.meterTop{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:10px; gap:12px; }
+.pctBig{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:44px; line-height:.9; color:var(--accent); }
+.pctBig small{ font-size:18px; color:#AEBDD6; margin-left:4px; font-weight:600; }
+.pctLabel{ font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#8DA0BF; margin-top:6px; }
+.charge{ height:18px; border-radius:10px; background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.14); overflow:hidden; position:relative; }
+.chargeFill{ height:100%; border-radius:10px 8px 8px 10px; width:0%;
+  background:linear-gradient(90deg,var(--accent-deep),var(--accent));
+  box-shadow:0 0 18px var(--glow); transition:width .55s cubic-bezier(.22,1,.36,1); position:relative; }
+.chargeFill::after{ content:""; position:absolute; inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
+  transform:translateX(-100%); animation:sweep 2.6s ease-in-out infinite; }
+@keyframes sweep{ 0%{transform:translateX(-100%)} 60%,100%{transform:translateX(220%)} }
+
+/* Breakdown (disciplinas x horas) */
+.split{ display:flex; gap:10px; margin-top:16px; }
+.splitCard{ flex:1; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
+  border-radius:12px; padding:11px 13px; }
+.splitCard .k{ font-size:11px; color:#9FB0CC; letter-spacing:.06em; text-transform:uppercase; }
+.splitCard .v{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:18px; margin:3px 0 7px; }
+.splitBar{ height:6px; border-radius:4px; background:rgba(255,255,255,.12); overflow:hidden; }
+.splitBar > div{ height:100%; background:var(--accent); border-radius:4px; width:0%; transition:width .45s ease; }
+
+/* Título de seção */
+.sectionTitle{ display:flex; align-items:center; gap:10px; margin:30px 2px 4px; }
+.sectionTitle span{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:13px;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); }
+.sectionTitle::after{ content:""; flex:1; height:1px; background:var(--line); }
+
+/* Cards */
+.card{ background:var(--surface); border:1px solid var(--line); border-radius:18px;
+  padding:18px 18px 8px; margin-top:14px; box-shadow:0 6px 22px -18px rgba(19,37,64,.45); }
+.cardHead{ display:flex; align-items:center; gap:12px; margin-bottom:6px; flex-wrap:wrap; }
+.cardHead h2{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:17px; margin:0; letter-spacing:-.01em; }
+.miniWrap{ margin-left:auto; display:flex; align-items:center; gap:9px; }
+.miniBar{ width:96px; height:7px; border-radius:5px; background:var(--track); overflow:hidden; }
+.miniFill{ height:100%; background:var(--accent); border-radius:5px; width:0%; transition:width .4s ease; }
+.miniTxt{ font-size:12px; color:var(--ink-soft); font-variant-numeric:tabular-nums; min-width:42px; text-align:right; }
+
+/* Matéria */
+.mat{ display:flex; align-items:center; gap:12px; padding:12px 0; border-top:1px solid var(--line); }
+.mat:first-of-type{ border-top:none; }
+.check{ flex:none; width:26px; height:26px; border-radius:8px; border:2px solid var(--track);
+  background:transparent; cursor:pointer; padding:0; display:grid; place-items:center; color:#fff;
+  font-size:15px; font-weight:700; transition:transform .12s ease, background .18s ease, border-color .18s ease; }
+.check span{ opacity:0; transition:opacity .15s ease; line-height:1; }
+.check:hover{ border-color:var(--accent); transform:translateY(-1px); }
+.check:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+.check.on{ background:var(--accent); border-color:var(--accent); box-shadow:0 0 10px var(--glow); }
+.check.on span{ opacity:1; }
+.matInfo{ flex:1; min-width:0; cursor:pointer; }
+.matNome{ font-size:14.5px; font-weight:500; line-height:1.3; }
+.matNome.done{ color:var(--ink-soft); text-decoration:line-through; text-decoration-color:var(--accent); }
+.obs{ font-size:11px; color:var(--accent-deep); font-weight:500; margin-top:2px; }
+.aulas{ flex:none; font-size:12px; color:var(--ink-soft); background:var(--bg); border:1px solid var(--line);
+  padding:3px 9px; border-radius:20px; white-space:nowrap; font-variant-numeric:tabular-nums; }
+
+/* Horas complementares */
+.hora{ padding:14px 0; border-top:1px solid var(--line); }
+.hora:first-of-type{ border-top:none; }
+.horaTop{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:9px; }
+.horaNome{ font-size:14.5px; font-weight:600; display:flex; align-items:center; gap:7px; }
+.horaNome .ok{ color:var(--accent-deep); font-size:13px; opacity:0; transition:opacity .2s; }
+.horaNome.full .ok{ opacity:1; }
+.horaCtrl{ display:flex; align-items:center; gap:8px; }
+.stepBtn{ width:30px; height:30px; border-radius:8px; border:1px solid var(--line); background:var(--surface);
+  color:var(--ink); font-size:17px; font-weight:600; cursor:pointer; line-height:1; display:grid; place-items:center;
+  transition:all .12s ease; }
+.stepBtn:hover{ border-color:var(--accent); color:var(--accent-deep); }
+.stepBtn:active{ transform:scale(.94); }
+.horaInput{ width:66px; text-align:center; font-family:inherit; font-size:15px; font-weight:600; color:var(--ink);
+  border:1px solid var(--line); border-radius:9px; padding:6px 4px; font-variant-numeric:tabular-nums; background:var(--bg); }
+.horaInput:focus{ outline:2px solid var(--accent); outline-offset:1px; background:#fff; }
+.horaUnit{ font-size:12px; color:var(--ink-soft); min-width:64px; }
+.horaBarWrap{ display:flex; align-items:center; gap:10px; }
+.horaBar{ flex:1; height:9px; border-radius:6px; background:var(--track); overflow:hidden; }
+.horaBar > div{ height:100%; background:linear-gradient(90deg,var(--accent-deep),var(--accent)); border-radius:6px; width:0%;
+  transition:width .4s ease; box-shadow:0 0 8px var(--glow); }
+.horaPct{ font-size:12px; color:var(--ink-soft); font-variant-numeric:tabular-nums; min-width:38px; text-align:right; }
+
+/* Rodapé */
+.footer{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:26px; flex-wrap:wrap; }
+.hint{ font-size:12px; color:var(--ink-soft); display:flex; align-items:center; gap:6px; }
+.reset{ display:inline-flex; align-items:center; gap:7px; background:transparent; border:1px solid var(--line);
+  color:var(--ink-soft); border-radius:10px; padding:8px 14px; font-size:13px; font-family:inherit;
+  font-weight:500; cursor:pointer; transition:all .15s ease; }
+.reset:hover{ border-color:#E0A0A0; color:#C0392B; }
+.reset:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+@media (max-width:520px){
+  .miniWrap{ margin-left:0; width:100%; }
+  .miniBar{ flex:1; width:auto; }
+  .aulas{ font-size:11px; padding:2px 8px; }
+  .pctBig{ font-size:40px; }
+  .horaUnit{ min-width:0; }
+}
+@media (prefers-reduced-motion:reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="eyebrow">⚡ Grade Curricular</div>
+    <h1>Engenharia Elétrica</h1>
+    <p class="sub">UTFPR — Câmpus Cornélio Procópio · rumo à formatura</p>
+    <div class="nameRow">
+      <label for="nome">Quem é você?</label>
+      <input id="nome" class="nameInput" placeholder="Seu nome (opcional)" />
+    </div>
+    <div class="meterTop">
+      <div>
+        <div class="pctBig"><span id="pct">0</span><small>%</small></div>
+        <div class="pctLabel">Conclusão do curso</div>
+      </div>
+    </div>
+    <div class="charge"><div class="chargeFill" id="chargeFill"></div></div>
+
+    <div class="split">
+      <div class="splitCard">
+        <div class="k">Disciplinas</div>
+        <div class="v"><span id="discFeitas">0</span>/<span id="discTotal">0</span></div>
+        <div class="splitBar"><div id="discBar"></div></div>
+      </div>
+      <div class="splitCard">
+        <div class="k">Horas complementares</div>
+        <div class="v"><span id="horasFeitas">0</span>/<span id="horasTotal">0</span>h</div>
+        <div class="splitBar"><div id="horasBar"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sectionTitle"><span>Disciplinas obrigatórias</span></div>
+  <div id="periodos"></div>
+
+  <div class="sectionTitle"><span>Horas complementares</span></div>
+  <div id="horasBox"></div>
+
+  <div class="footer">
+    <div class="hint">🎓 Progresso salvo automático neste navegador</div>
+    <button class="reset" id="reset">↺ Zerar progresso</button>
+  </div>
+</div>
+
+<script>
+/* ----------------------------- Dados ----------------------------- */
+const GRADE = [
+  { periodo:"1º Período", materias:[
+    {id:"p1-com", nome:"Comunicação Oral e Escrita", aulas:2},
+    {id:"p1-ele", nome:"Eletricidade Básica", aulas:4},
+    {id:"p1-exp", nome:"Expressão Gráfica", aulas:2},
+    {id:"p1-pre", nome:"Pré-Cálculo", aulas:4},
+    {id:"p1-gal", nome:"GAL", aulas:6},
+    {id:"p1-int", nome:"Introdução à Engenharia Elétrica", aulas:2},
+    {id:"p1-qui", nome:"Química", aulas:2},
+  ]},
+  { periodo:"2º Período", materias:[
+    {id:"p2-acc", nome:"ACC — Análise de Circuitos em C. Contínua", aulas:6},
+    {id:"p2-cal", nome:"Cálculo 1", aulas:6},
+    {id:"p2-lab", nome:"Laboratório de Física 1", aulas:2},
+    {id:"p2-log", nome:"Lógica de Programação", aulas:4},
+    {id:"p2-fis", nome:"Física 1", aulas:4},
+  ]},
+  { periodo:"3º Período", materias:[
+    {id:"p3-aca", nome:"ACA — Análise de Circuitos em C. Alternada", aulas:6},
+    {id:"p3-cal", nome:"Cálculo 2", aulas:4},
+    {id:"p3-ele", nome:"Eletrônica Básica", aulas:4},
+    {id:"p3-lin", nome:"Linguagem de Programação", aulas:4},
+    {id:"p3-mat", nome:"Materiais e Equipamentos Elétricos", aulas:2},
+    {id:"p3-pro", nome:"Probabilidade e Estatística", aulas:4},
+    {id:"p3-teo", nome:"Teoria de Eletricidade e Magnetismo", aulas:4},
+  ]},
+  { periodo:"4º Período", materias:[
+    {id:"p4-num", nome:"Cálculo Numérico", aulas:4},
+    {id:"p4-cal", nome:"Cálculo 3", aulas:4},
+    {id:"p4-elm", nome:"Eletromagnetismo", aulas:4},
+    {id:"p4-equ", nome:"Equações Diferenciais", aulas:4},
+    {id:"p4-lab", nome:"Lab. de Termodinâmica, Fluidos e Ondas", aulas:2},
+    {id:"p4-med", nome:"Medidas Elétricas", aulas:4},
+    {id:"p4-teo", nome:"Teoria de Termodinâmica, Fluidos e Ondas", aulas:4},
+  ]},
+  { periodo:"5º Período", materias:[
+    {id:"p5-cir", nome:"Circuitos Digitais", aulas:4},
+    {id:"p5-cer", nome:"Certificadora 1", aulas:2, obs:"precisa estar no 5º período"},
+    {id:"p5-pot", nome:"Eletrônica de Potência", aulas:6},
+    {id:"p5-ges", nome:"Gestão Ambiental", aulas:2},
+    {id:"p5-maq", nome:"Máquinas Elétricas 1", aulas:4},
+    {id:"p5-mec", nome:"Mecânica e Resistência dos Materiais", aulas:4},
+    {id:"p5-sin", nome:"Sinais e Sistemas", aulas:2},
+  ]},
+  { periodo:"6º Período", materias:[
+    {id:"p6-con", nome:"Controle Contínuo", aulas:4},
+    {id:"p6-cer", nome:"Certificadora 2", aulas:2},
+    {id:"p6-eco", nome:"Economia", aulas:2},
+    {id:"p6-fen", nome:"Fenômenos de Transporte", aulas:4},
+    {id:"p6-ins", nome:"Instalações Elétricas Prediais", aulas:6},
+    {id:"p6-mic", nome:"Microcontroladores", aulas:4},
+    {id:"p6-maq", nome:"Máquinas Elétricas 2", aulas:4},
+  ]},
+  { periodo:"7º Período", materias:[
+    {id:"p7-seg", nome:"Fund. de Eng. de Segurança do Trabalho", aulas:2},
+    {id:"p7-ges", nome:"Gestão da Produção", aulas:2},
+    {id:"p7-aut", nome:"Introdução à Automação Industrial", aulas:4},
+    {id:"p7-ind", nome:"Instalações Elétricas Industriais", aulas:4},
+    {id:"p7-met", nome:"Metodologia Científica e Tecnológica", aulas:2},
+    {id:"p7-maq", nome:"Máquinas Elétricas 3", aulas:4},
+    {id:"p7-sep", nome:"Sistemas Elétricos de Potência 1", aulas:4},
+    {id:"p7-tra", nome:"Transmissão de Dados", aulas:4},
+  ]},
+  { periodo:"8º Período", materias:[
+    {id:"p8-dis", nome:"Distribuição de Energia", aulas:4},
+    {id:"p8-sep", nome:"Sistemas Elétricos de Potência 2", aulas:4},
+  ]},
+];
+
+const HORAS = [
+  {id:"hum", nome:"Humanidades", total:120},
+  {id:"apr", nome:"Aprofundamento", total:180},
+  {id:"ext", nome:"Atividades de Extensão", total:394},
+];
+
+const TOTAL_MAT = GRADE.reduce((s,p)=>s+p.materias.length,0);
+const TOTAL_HORAS = HORAS.reduce((s,h)=>s+h.total,0);
+const KEY = "tracker-grade-eletrica-v2";
+
+/* ----------------------------- Estado ----------------------------- */
+let progresso = {};   // { id: true } matérias concluídas
+let horas = {};       // { hum: n, apr: n, ext: n }
+let nome = "";
+
+function carregar(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw){ const d = JSON.parse(raw); progresso = d.progresso || {}; horas = d.horas || {}; nome = d.nome || ""; }
+  }catch(e){}
+}
+function salvar(){
+  try{ localStorage.setItem(KEY, JSON.stringify({progresso, horas, nome})); }
+  catch(e){ console.error("Não deu pra salvar:", e); }
+}
+
+/* ----------------------------- UI ----------------------------- */
+const el = (id)=>document.getElementById(id);
+const refs = { periodos:{}, mats:{}, horas:{} };
+
+function toggle(id){
+  if(progresso[id]) delete progresso[id];
+  else progresso[id] = true;
+  salvar(); atualizar();
+}
+
+function setHoras(id, total, valor){
+  let v = parseInt(valor, 10);
+  if(isNaN(v) || v < 0) v = 0;
+  if(v > total) v = total;
+  horas[id] = v;
+  salvar(); atualizar();
+}
+
+function montar(){
+  const cont = el("periodos");
+  GRADE.forEach((per, pi)=>{
+    const card = document.createElement("div"); card.className = "card";
+    const head = document.createElement("div"); head.className = "cardHead";
+    const h2 = document.createElement("h2"); h2.textContent = per.periodo;
+    const miniWrap = document.createElement("div"); miniWrap.className = "miniWrap";
+    const miniBar = document.createElement("div"); miniBar.className = "miniBar";
+    const miniFill = document.createElement("div"); miniFill.className = "miniFill";
+    const miniTxt = document.createElement("div"); miniTxt.className = "miniTxt";
+    miniBar.appendChild(miniFill); miniWrap.appendChild(miniBar); miniWrap.appendChild(miniTxt);
+    head.appendChild(h2); head.appendChild(miniWrap); card.appendChild(head);
+    refs.periodos[pi] = { miniFill, miniTxt, total:per.materias.length };
+
+    per.materias.forEach((m)=>{
+      const mat = document.createElement("div"); mat.className = "mat";
+      const check = document.createElement("button"); check.className = "check";
+      check.setAttribute("role","checkbox"); check.setAttribute("aria-checked","false");
+      check.setAttribute("aria-label", m.nome);
+      const cs = document.createElement("span"); cs.textContent = "✓"; check.appendChild(cs);
+      check.addEventListener("click", ()=>toggle(m.id));
+      const info = document.createElement("div"); info.className = "matInfo";
+      const nomeEl = document.createElement("div"); nomeEl.className = "matNome"; nomeEl.textContent = m.nome;
+      info.appendChild(nomeEl);
+      if(m.obs){ const obs = document.createElement("div"); obs.className = "obs"; obs.textContent = "⚑ " + m.obs; info.appendChild(obs); }
+      info.addEventListener("click", ()=>toggle(m.id));
+      const aulas = document.createElement("div"); aulas.className = "aulas";
+      aulas.textContent = m.aulas + (m.aulas === 1 ? " aula" : " aulas");
+      mat.appendChild(check); mat.appendChild(info); mat.appendChild(aulas);
+      card.appendChild(mat);
+      refs.mats[m.id] = { check, nomeEl };
+    });
+    cont.appendChild(card);
+  });
+
+  // Horas complementares
+  const hbox = el("horasBox");
+  const hcard = document.createElement("div"); hcard.className = "card";
+  const hhead = document.createElement("div"); hhead.className = "cardHead";
+  const hh2 = document.createElement("h2"); hh2.textContent = "Cargas horárias";
+  const hMiniWrap = document.createElement("div"); hMiniWrap.className = "miniWrap";
+  const hMiniBar = document.createElement("div"); hMiniBar.className = "miniBar";
+  const hMiniFill = document.createElement("div"); hMiniFill.className = "miniFill";
+  const hMiniTxt = document.createElement("div"); hMiniTxt.className = "miniTxt";
+  hMiniBar.appendChild(hMiniFill); hMiniWrap.appendChild(hMiniBar); hMiniWrap.appendChild(hMiniTxt);
+  hhead.appendChild(hh2); hhead.appendChild(hMiniWrap); hcard.appendChild(hhead);
+  refs.horasBlock = { miniFill:hMiniFill, miniTxt:hMiniTxt };
+
+  HORAS.forEach((h)=>{
+    const row = document.createElement("div"); row.className = "hora";
+    const top = document.createElement("div"); top.className = "horaTop";
+    const nomeEl = document.createElement("div"); nomeEl.className = "horaNome";
+    nomeEl.innerHTML = h.nome + ' <span class="ok">✓ completo</span>';
+    const ctrl = document.createElement("div"); ctrl.className = "horaCtrl";
+    const minus = document.createElement("button"); minus.className = "stepBtn"; minus.textContent = "−"; minus.setAttribute("aria-label","Menos 10h");
+    const input = document.createElement("input"); input.className = "horaInput"; input.type = "number";
+    input.min = "0"; input.max = String(h.total); input.setAttribute("aria-label","Horas feitas de " + h.nome);
+    const plus = document.createElement("button"); plus.className = "stepBtn"; plus.textContent = "+"; plus.setAttribute("aria-label","Mais 10h");
+    const unit = document.createElement("div"); unit.className = "horaUnit"; unit.textContent = "de " + h.total + "h";
+    minus.addEventListener("click", ()=>setHoras(h.id, h.total, (horas[h.id]||0) - 10));
+    plus.addEventListener("click", ()=>setHoras(h.id, h.total, (horas[h.id]||0) + 10));
+    input.addEventListener("input", ()=>setHoras(h.id, h.total, input.value));
+    ctrl.appendChild(minus); ctrl.appendChild(input); ctrl.appendChild(plus); ctrl.appendChild(unit);
+    top.appendChild(nomeEl); top.appendChild(ctrl);
+
+    const barWrap = document.createElement("div"); barWrap.className = "horaBarWrap";
+    const bar = document.createElement("div"); bar.className = "horaBar";
+    const fill = document.createElement("div"); bar.appendChild(fill);
+    const pctEl = document.createElement("div"); pctEl.className = "horaPct";
+    barWrap.appendChild(bar); barWrap.appendChild(pctEl);
+
+    row.appendChild(top); row.appendChild(barWrap);
+    hcard.appendChild(row);
+    refs.horas[h.id] = { input, fill, pctEl, nomeEl, total:h.total };
+  });
+  hbox.appendChild(hcard);
+
+  el("discTotal").textContent = TOTAL_MAT;
+  el("horasTotal").textContent = TOTAL_HORAS;
+
+  const nomeInput = el("nome");
+  nomeInput.value = nome;
+  nomeInput.addEventListener("input", (e)=>{ nome = e.target.value; salvar(); });
+
+  el("reset").addEventListener("click", ()=>{
+    if(confirm("Zerar todo o seu progresso (disciplinas e horas)? Isso não dá pra desfazer.")){
+      progresso = {}; horas = {}; salvar(); atualizar();
+    }
+  });
+}
+
+function atualizar(){
+  // Disciplinas
+  let matFeitas = 0;
+  GRADE.forEach((per, pi)=>{
+    let feitasPer = 0;
+    per.materias.forEach((m)=>{
+      const done = !!progresso[m.id];
+      if(done){ feitasPer++; matFeitas++; }
+      const r = refs.mats[m.id];
+      r.check.classList.toggle("on", done);
+      r.check.setAttribute("aria-checked", done ? "true" : "false");
+      r.nomeEl.classList.toggle("done", done);
+    });
+    const tot = refs.periodos[pi].total;
+    refs.periodos[pi].miniFill.style.width = Math.round((feitasPer/tot)*100) + "%";
+    refs.periodos[pi].miniTxt.textContent = feitasPer + "/" + tot;
+  });
+
+  // Horas
+  let horasFeitas = 0;
+  HORAS.forEach((h)=>{
+    let v = horas[h.id] || 0;
+    if(v > h.total) v = h.total;
+    horasFeitas += v;
+    const r = refs.horas[h.id];
+    if(document.activeElement !== r.input) r.input.value = v;
+    const p = Math.round((v/h.total)*100);
+    r.fill.style.width = p + "%";
+    r.pctEl.textContent = p + "%";
+    r.nomeEl.classList.toggle("full", v >= h.total);
+  });
+
+  // Percentuais
+  const pctDisc = matFeitas / TOTAL_MAT;
+  const pctHoras = horasFeitas / TOTAL_HORAS;
+  const pctTotal = Math.round(((pctDisc + pctHoras) / 2) * 100);
+
+  el("pct").textContent = pctTotal;
+  el("chargeFill").style.width = pctTotal + "%";
+  el("discFeitas").textContent = matFeitas;
+  el("horasFeitas").textContent = horasFeitas;
+  el("discBar").style.width = Math.round(pctDisc*100) + "%";
+  el("horasBar").style.width = Math.round(pctHoras*100) + "%";
+  refs.horasBlock.miniFill.style.width = Math.round(pctHoras*100) + "%";
+  refs.horasBlock.miniTxt.textContent = horasFeitas + "/" + TOTAL_HORAS + "h";
+}
+
+carregar(); montar(); atualizar();
+</script>
+</body>
+</html>
